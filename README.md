@@ -1,5 +1,5 @@
 # FullStackOpen
-
+Working on FullStackOpen course. [FullStackOpen](https://fullstackopen.com/en/)
 # Usefull resources
 
 ## JavaScript
