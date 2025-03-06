@@ -11,3 +11,9 @@ Working on FullStackOpen course. [FullStackOpen](https://fullstackopen.com/en/)
 #### Interesting topics to further investigate
 - The `this` keyword. [Ref](https://egghead.io/courses/understand-javascript-s-this-keyword-in-depth)
 - All data types (Number, BigInt, String, Boolean, Symbol, Undefined, Null) [JavaScript Language Overview](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Language_overview)
+
+## React
+
+#### Interesting topics to further investigate
+- How state was handled in React Application before React 16 and the `useState` hook. [Class Component](https://react.dev/reference/react/Component)
+- What is React Strict Mode. [Strict Mode](https://react.dev/reference/react/StrictMode)
