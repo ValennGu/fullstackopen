@@ -1,29 +1,54 @@
-const Header = (props) => {
-  return <h1>{props.title}</h1>
-}
-const Part = (props) => {
-  return <p>{props.title} -- {props.exercises}</p>
-}
-const Content = (props) => {
-  return props.list.map(el => <Part title={el.title} exercises={el.exercises} />)
-}
-const Total = (props) => {
-  return <p>Number of exercises {props.exercises.reduce((curr, acc) => curr + acc, 0)}</p>
-}
+import Course from './Course'
 
 const App = () => {
-  const course = 'Half Stack application development'
-  const list = [
-    { title: 'Fundamentals of React', exercises: 10 },
-    { title: 'Using props to pass data', exercises: 7 },
-    { title: 'State of a component', exercises: 14 },
+  const courses = [
+    {
+      name: 'Half Stack application development',
+      id: 1,
+      parts: [
+        {
+          name: 'Fundamentals of React',
+          exercises: 10,
+          id: 1
+        },
+        {
+          name: 'Using props to pass data',
+          exercises: 7,
+          id: 2
+        },
+        {
+          name: 'State of a component',
+          exercises: 14,
+          id: 3
+        },
+        {
+          name: 'Redux',
+          exercises: 11,
+          id: 4
+        }
+      ]
+    }, 
+    {
+      name: 'Node.js',
+      id: 2,
+      parts: [
+        {
+          name: 'Routing',
+          exercises: 3,
+          id: 1
+        },
+        {
+          name: 'Middlewares',
+          exercises: 7,
+          id: 2
+        }
+      ]
+    }
   ]
 
   return (
     <div>
-      <Header title={course} />
-      <Content list={list} />
-      <Total exercises={list.map(el => el.exercises)}/>
+      {courses.map(course => <Course key={course.id} course={course} />)}
     </div>
   )
 }
