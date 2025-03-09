@@ -3,18 +3,23 @@ import { useState, useEffect } from 'react'
 import PersonsService from './services/persons'
 import PersonList from './components/PersonList'
 import PersonForm from './components/PersonForm'
+import Notification from './components/Notification'
 
 const App = () => {
   const [filter, setFilter] = useState('')
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
-  const [persons, setPersons] = useState([])
+  const [persons, setPersons] = useState(null)
+  const [message, setMessage] = useState({type: 'msg', text: null})
 
   useEffect(() => {
     PersonsService
       .getAll()
       .then(data => setPersons(data))
-      .catch(err => console.log(err.message))
+      .catch(() => {
+        setMessage({type: 'err', text: `Unable to get data from the server.`})
+        setTimeout(() => setMessage({type: 'msg', text: null}), 5000)
+      })
   }, [])
 
   const onFilterChange = (event) => setFilter(event.target.value)
@@ -36,34 +41,52 @@ const App = () => {
         const personToUpdate = persons.find(p => p.name === newName)
         PersonsService
           .update({ ...personToUpdate, number: newNumber })
-          .then(data => setPersons([ ...persons.filter(p => p.id !== data.id), data ]))
-          .catch(err => console.log(err))
+          .then(data => {
+            setPersons([ ...persons.filter(p => p.id !== data.id), data ])
+            setMessage({ type: 'msg', text: `${data.name}'s phone number has been updated.` })
+            setTimeout(() => setMessage({type: 'msg', text: null}), 5000)
+          })
+          .catch(() => {
+            setMessage({type: 'err', text: `There was some error when trying to add a new entry to the phonebook. Please try again.`})
+            setTimeout(() => setMessage({type: 'msg', text: null}), 5000)
+          })
       }
       
       return
     }
 
-    if (persons.some(person => person.name === newName || person.number === newNumber)) {
-      alert(`${newName}(${newNumber}) is alredy in the Phonebook.`)
-      return
-    }
-
     PersonsService
       .create({ name: newName, number: newNumber })
-      .then(response => setPersons([ ...persons, response ]))
-      .catch(err => console.log(err))
+      .then(data => {
+        setPersons([ ...persons, data ])
+        setMessage({type: 'msg', text: `${data.name} has been added to the phonebook.`})
+        setTimeout(() => setMessage({type: 'msg', text: null}), 5000)
+      })
+      .catch(() => {
+        setMessage({type: 'err', text: `There was some error when trying to add a new entry to the phonebook. Please try again.`})
+        setTimeout(() => setMessage({type: 'msg', text: null}), 5000)
+      })
   }
 
   const onDeletePerson = (id) => {
     if (window.confirm('Are you sure about deleting that entry?')) {
       PersonsService
         .deleteById(id)
-        .then(data => setPersons(persons.filter(person => person.id !== data.id)))
-        .catch(err => console.log(err))
+        .then(data => {
+          setPersons(persons.filter(person => person.id !== data.id))
+          setMessage({type: 'msg', text: `${data.name} has been removed from the phonebook.`})
+          setTimeout(() => setMessage({type: 'msg', text: null}), 5000)
+        })
+        .catch(() => {
+          setMessage({type: 'err', text: `There was some error when trying to remove the entry from the phonebook. Please try again.`})
+          setTimeout(() => setMessage({type: 'msg', text: null}), 5000)
+        })
     }
   }
 
-  const filteredPersons = persons.filter(person => person.name.toLowerCase().includes(filter.toLowerCase()))
+  const filteredPersons = persons
+    ? persons.filter(person => person.name.toLowerCase().includes(filter.toLowerCase()))
+    : []
 
   return (
     <div>
@@ -75,6 +98,7 @@ const App = () => {
         onNameChange={onNewNameChange}
         onNumberChange={onNewNumberChange}
       />
+      <Notification message={message.text} type={message.type} />
       <h2>Numbers</h2>
       <input value={filter} onChange={onFilterChange} />
       <PersonList list={filteredPersons} onDelete={onDeletePerson}/>
