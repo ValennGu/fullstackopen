@@ -14,6 +14,7 @@ Working on FullStackOpen course. [FullStackOpen](https://fullstackopen.com/en/)
 - The `this` keyword. [Ref](https://egghead.io/courses/understand-javascript-s-this-keyword-in-depth)
 - All data types (Number, BigInt, String, Boolean, Symbol, Undefined, Null) [JavaScript Language Overview](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Language_overview)
 - What the heck is the event loop? [Philip Roberts](https://www.youtube.com/watch?v=8aGhZQkoFbQ)
+- Understanding NPM's dependency model. [Ref](https://lexi-lambda.github.io/blog/2016/08/24/understanding-the-npm-dependency-model/)
 
 ## React
 
