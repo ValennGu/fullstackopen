@@ -46,8 +46,8 @@ const App = () => {
             setMessage({ type: 'msg', text: `${data.name}'s phone number has been updated.` })
             setTimeout(() => setMessage({type: 'msg', text: null}), 5000)
           })
-          .catch(() => {
-            setMessage({type: 'err', text: `There was some error when trying to add a new entry to the phonebook. Please try again.`})
+          .catch((err) => {
+            setMessage({type: 'err', text: err.response.data.message})
             setTimeout(() => setMessage({type: 'msg', text: null}), 5000)
           })
       }
@@ -62,8 +62,9 @@ const App = () => {
         setMessage({type: 'msg', text: `${data.name} has been added to the phonebook.`})
         setTimeout(() => setMessage({type: 'msg', text: null}), 5000)
       })
-      .catch(() => {
-        setMessage({type: 'err', text: `There was some error when trying to add a new entry to the phonebook. Please try again.`})
+      .catch((err) => {
+        console.log(err)
+        setMessage({type: 'err', text: err.response.data.message })
         setTimeout(() => setMessage({type: 'msg', text: null}), 5000)
       })
   }
@@ -77,8 +78,8 @@ const App = () => {
           setMessage({type: 'msg', text: `${data.name} has been removed from the phonebook.`})
           setTimeout(() => setMessage({type: 'msg', text: null}), 5000)
         })
-        .catch(() => {
-          setMessage({type: 'err', text: `There was some error when trying to remove the entry from the phonebook. Please try again.`})
+        .catch((err) => {
+          setMessage({type: 'err', text: err.response.data.message})
           setTimeout(() => setMessage({type: 'msg', text: null}), 5000)
         })
     }
