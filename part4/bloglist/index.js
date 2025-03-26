@@ -1,14 +1,15 @@
 const express = require('express')
 const cors = require('cors')
 const mongoose = require('mongoose')
-const { mongoDBUri, port } = require('./utils/config')
+const { MONGODB_URI, PORT } = require('./utils/config')
 const logger = require('./utils/logger')
 const middleware = require('./utils/middleware')
 const blogsRouter = require('./controllers/blogs')
 
 const app = express()
 
-mongoose.connect(mongoDBUri)
+logger.info('Connecting to database ...')
+mongoose.connect(MONGODB_URI)
   .then(() => logger.info('Connected to database'))
   .catch(() => logger.error('Could not connect to database'))
 
@@ -21,6 +22,6 @@ app.use('/api/blogs', blogsRouter)
 app.use(middleware.unknownEndpoint)
 app.use(middleware.errorHandler)
 
-app.listen(port, () => {
-  logger.info(`Server running on port ${port}`)
+app.listen(PORT, () => {
+  logger.info(`Server running on port ${PORT}`)
 })
