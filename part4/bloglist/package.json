@@ -5,7 +5,7 @@
   "scripts": {
     "start": "node index.js",
     "dev": "node --watch index.js",
-    "test": "test"
+    "test": "node --test"
   },
   "author": "Valentin Gutierrez",
   "license": "MIT",
