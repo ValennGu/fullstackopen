@@ -9,6 +9,7 @@ const blogsRouter = require('./controllers/blogs')
 const app = express()
 
 logger.info('Connecting to database ...')
+mongoose.set('strictQuery', false)
 mongoose.connect(MONGODB_URI)
   .then(() => logger.info('Connected to database'))
   .catch(() => logger.error('Could not connect to database'))
