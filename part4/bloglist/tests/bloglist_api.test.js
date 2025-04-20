@@ -1,3 +1,4 @@
+const logger = require('./../utils/logger')
 const { test, after, beforeEach, describe } = require('node:test')
 const assert = require('node:assert')
 const mongoose = require('mongoose')
@@ -95,6 +96,22 @@ describe('bloglist API', () => {
         author: 'Mr. Coder'
       })
       .expect(400)
+  })
+
+  test('DELETE: remmoves an element from the database', async () => {
+    let response = await api.get('/api/blogs')
+    let blogs = response.body
+
+    const idToDelete = blogs[0].id
+
+    await api
+      .delete(`/api/blogs/${idToDelete}`)
+      .expect(200)
+
+    response = await api.get('/api/blogs')
+    blogs = response.body
+
+    assert.ok(!blogs.map(b => b.id).includes(idToDelete))
   })
 })
 

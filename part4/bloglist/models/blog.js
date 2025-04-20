@@ -1,6 +1,5 @@
 const mongoose = require('mongoose')
 
-// TODO: Add custom validators.
 const blogSchema = new mongoose.Schema({
   title: {
     type: String,
