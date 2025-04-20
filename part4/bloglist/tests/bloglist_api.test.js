@@ -1,4 +1,3 @@
-const logger = require('./../utils/logger')
 const { test, after, beforeEach, describe } = require('node:test')
 const assert = require('node:assert')
 const mongoose = require('mongoose')
@@ -112,6 +111,22 @@ describe('bloglist API', () => {
     blogs = response.body
 
     assert.ok(!blogs.map(b => b.id).includes(idToDelete))
+  })
+
+  test.only('UPDATE: updates the likes for a blog', async () => {
+    let response = await api.get('/api/blogs')
+    let blogs = response.body
+
+    const id = blogs[0].id
+
+    await api
+      .post(`/api/blogs/${id}`)
+      .send({ likes: 10 })
+      .expect(200)
+
+    response = await api.get(`/api/blogs/${id}`)
+
+    assert.equal(response.body.likes, 10)
   })
 })
 
