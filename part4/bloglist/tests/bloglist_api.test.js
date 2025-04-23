@@ -113,7 +113,7 @@ describe('bloglist API', () => {
     assert.ok(!blogs.map(b => b.id).includes(idToDelete))
   })
 
-  test.only('UPDATE: updates the likes for a blog', async () => {
+  test('UPDATE: updates the likes for a blog', async () => {
     let response = await api.get('/api/blogs')
     let blogs = response.body
 

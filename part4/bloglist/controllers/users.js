@@ -15,6 +15,14 @@ usersRouter.get('/', async (request, response, next) => {
 usersRouter.post('/', async (request, response, next) => {
   const { username, name, password } = request.body
 
+  /**
+   * Since "password" is not stored in the database
+   * validation occurs at controller.
+   */
+  if (!password || password.length < 3) {
+    next({ name: 'ValidationError', message: 'Password is shorter than 3' })
+  }
+
   try {
     const newUser = new User({
       name,
