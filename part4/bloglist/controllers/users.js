@@ -5,7 +5,7 @@ const { SALT } = require('./../utils/config')
 
 usersRouter.get('/', async (request, response, next) => {
   try {
-    const users = await User.find({})
+    const users = await User.find({}).populate({ path: 'blogs', select: '-user' })
     response.status(200).json(users)
   } catch (err) {
     next(err)

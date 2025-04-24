@@ -1,9 +1,10 @@
 const blogsRouter = require('express').Router()
 const Blog = require('../models/blog')
+const User = require('../models/user')
 
 blogsRouter.get('', async (_request, response, next) => {
   try {
-    const blogs = await Blog.find({})
+    const blogs = await Blog.find({}).populate({ path: 'user', select: '-passwordHash' })
     response.json(blogs)
   } catch (err) {
     next(err)
@@ -22,7 +23,14 @@ blogsRouter.get('/:id', async (request, response, next) => {
 blogsRouter.post('', async (request, response, next) => {
   try {
     const blog = new Blog(request.body)
+    const user = await User.findOne()
+
+    blog.user = user
+    user.blogs = [...user.blogs, blog.id]
+
     const result = await blog.save()
+    await user.save()
+
     response.status(201).json(result)
   } catch (err) {
     next(err)

@@ -3,6 +3,7 @@ const assert = require('node:assert')
 const mongoose = require('mongoose')
 const supertest = require('supertest')
 const Blog = require('../models/blog')
+const User = require('../models/user')
 const app = require('../app')
 
 const api = supertest(app)
@@ -22,9 +23,22 @@ const initialBlogs = [
   }
 ]
 
+let createdUser
+
 beforeEach(async () => {
   await Blog.deleteMany({})
-  const blogObjects = initialBlogs.map(blog => new Blog(blog))
+  await User.deleteMany({})
+
+  const user = new User({ username: 'test', name: 'testname', passwordHash: 'pass' })
+  await user.save()
+
+  createdUser = user
+
+  const blogObjects = initialBlogs.map(blog => {
+    blog.user = user.id
+    return new Blog(blog)
+  })
+
   const blogPromises = blogObjects.map(blogObject => blogObject.save())
   await Promise.all(blogPromises)
 })
@@ -39,6 +53,10 @@ describe('bloglist API', () => {
   test('GET: returns 3 mocked blogs', async () => {
     const response = await api.get('/api/blogs')
     assert.strictEqual(response.body.length, initialBlogs.length)
+    assert.ok(response.body[0].user)
+    assert.ok(!response.body[0].user.passwordHash)
+    assert.equal(response.body[0].user.username, createdUser.username)
+    assert.equal(response.body[0].user.name, createdUser.name)
   })
   test('GET: returns blogswith id property', async () => {
     const response = await api.get('/api/blogs')
