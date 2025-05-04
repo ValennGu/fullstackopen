@@ -1,7 +1,8 @@
 const usersRouter = require('express').Router()
 const User = require('./../models/user')
 const bcrypt = require('bcrypt')
-const { SALT } = require('./../utils/config')
+const jwt = require('jsonwebtoken')
+const { SALT, SECRET } = require('./../utils/config')
 
 usersRouter.get('/', async (request, response, next) => {
   try {
@@ -35,6 +36,29 @@ usersRouter.post('/', async (request, response, next) => {
   } catch (err) {
     next(err)
   }
+})
+
+usersRouter.post('/login', async (request, response, next) => {
+  const { username, password } = request.body
+  const user = await User.findOne({ username })
+
+  if (!user) {
+    return next({ name: 'Unauthorized', message: `User "${username}" does not exist.` })
+  }
+
+  const isPasswordCorrect = await bcrypt.compare(password, user.passwordHash)
+  if (!isPasswordCorrect) {
+    return next({ name: 'Unauthorized', message: 'Password is not correct' })
+  }
+
+  const userForToken = {
+    username: user.username,
+    id: user.id
+  }
+
+  const token = jwt.sign(userForToken, SECRET)
+
+  response.status(200).send({ token, username, name: user.name })
 })
 
 module.exports = usersRouter

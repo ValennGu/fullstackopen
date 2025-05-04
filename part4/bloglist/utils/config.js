@@ -5,5 +5,6 @@ module.exports = {
     ? process.env.TEST_MONGODB_URI
     : process.env.MONGODB_URI,
   PORT: process.env.PORT,
-  SALT: process.env.SALT
+  SALT: process.env.SALT,
+  SECRET: process.env.SECRET
 }
