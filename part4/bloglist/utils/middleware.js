@@ -1,4 +1,7 @@
 const logger = require('./logger')
+const jwt = require('jsonwebtoken')
+const User = require('../models/user')
+const { SECRET } = require('../utils/config')
 
 const requestLogger = (req, res, next) => {
   logger.info(`${req.method} ${req.path} ${JSON.stringify(req.body)}`)
@@ -10,7 +13,7 @@ const unknownEndpoint = (req, res) => {
 }
 
 const errorHandler = (error, req, res, next) => {
-  logger.error(error.message)
+  logger.error(error)
 
   if (error.name === 'ValidationError') {
     return res.status(400).json({ error: error.message })
@@ -32,11 +35,50 @@ const errorHandler = (error, req, res, next) => {
     return res.status(401).json({ error: 'Invalid token' })
   }
 
+  if (error.name === 'SyntaxError') {
+    return res.status(400).json({ error: 'SyntaxError' })
+  }
+
+  if (error.name === 'NotFound') {
+    return res.status(404).json({ error: error.message })
+  }
+
   next(error)
 }
+
+const tokenExtractor = (req, res, next) => {
+  const authorization = req.headers.authorization
+  if (authorization && authorization.startsWith('Bearer')) {
+    const token = authorization.replace('Bearer ', '')
+    req.token = token
+  }
+
+  next()
+}
+
+const userExtractor = async (req, res, next) => {
+  const decodedToken = jwt.verify(req.token, SECRET)
+  if (!decodedToken) {
+    return next({ name: 'JsonWebTokenError' })
+  }
+
+  const user = await User.findOne({ username: decodedToken.username })
+  if (!user) {
+    return next({ name: 'Unauthorized', message: 'User not valid.' })
+  }
+
+  console.log(user.id)
+
+  req.user = user
+
+  next()
+}
+
 
 module.exports = {
   requestLogger,
   unknownEndpoint,
-  errorHandler
+  errorHandler,
+  tokenExtractor,
+  userExtractor
 }

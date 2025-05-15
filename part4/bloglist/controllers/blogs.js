@@ -1,17 +1,5 @@
-const jwt = require('jsonwebtoken')
 const blogsRouter = require('express').Router()
 const Blog = require('../models/blog')
-const User = require('../models/user')
-const { SECRET } = require('../utils/config')
-
-const getToken = (req) => {
-  const authorization = req.headers.authorization
-  if (authorization && authorization.startsWith('Bearer')) {
-    return authorization.replace('Bearer ', '')
-  }
-
-  return null
-}
 
 blogsRouter.get('', async (_request, response, next) => {
   try {
@@ -33,14 +21,8 @@ blogsRouter.get('/:id', async (request, response, next) => {
 
 blogsRouter.post('', async (request, response, next) => {
   try {
-    const decodedToken = jwt.verify(getToken(request), SECRET)
-
-    if (!decodedToken.id) {
-      return next({ name: 'JsonWebTokenError' })
-    }
-
     const blog = new Blog(request.body)
-    const user = await User.findById(decodedToken.id)
+    const user = request.user
 
     blog.user = user
     user.blogs = [...user.blogs, blog.id]
@@ -67,8 +49,19 @@ blogsRouter.post('/:id', async (request, response, next) => {
 
 blogsRouter.delete('/:id', async (request, response, next) => {
   try {
-    const blog = await Blog.findByIdAndDelete(request.params.id)
-    response.status(200).json(blog)
+    const blog = await Blog.findById(request.params.id).populate('user', { select: 'id' })
+
+    if (!blog) {
+      return next({ name: 'NotFound', message: 'Blog does not exist.' })
+    }
+
+    if (blog.user.id === request.user.id) {
+      await blog.deleteOne()
+      response.status(200).json(blog)
+    } else {
+      next({ name: 'Unauthorized', message: `User "${request.user.username}" does not have access to delete the Blog.` })
+    }
+
   } catch (err) {
     next(err)
   }
