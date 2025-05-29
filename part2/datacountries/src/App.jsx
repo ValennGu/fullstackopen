@@ -33,8 +33,8 @@ function App() {
 
   return (
     <>
-      Find Countries: <input value={filter} onChange={onFilterChange}/>
-      <CountriesList countries={filteredCountries} onShow={onShowCountry}/>
+      Find Countries: <input value={filter} onChange={onFilterChange} />
+      <CountriesList countries={filteredCountries} onShow={onShowCountry} />
     </>
   )
 }

@@ -8,6 +8,7 @@ const middleware = require('./utils/middleware')
 // Routes
 const blogsRouter = require('./controllers/blogs')
 const usersRouter = require('./controllers/users')
+const testingRouter = require('./controllers/testing')
 
 const app = express()
 
@@ -24,6 +25,10 @@ app.use(middleware.requestLogger)
 
 app.use('/api/blogs', middleware.userExtractor, blogsRouter)
 app.use('/api/users', usersRouter)
+
+if (process.env.NODE_ENV === 'test') {
+  app.use('/api/testing', testingRouter)
+}
 
 app.use(middleware.unknownEndpoint)
 app.use(middleware.errorHandler)

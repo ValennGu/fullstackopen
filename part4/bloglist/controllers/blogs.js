@@ -30,6 +30,7 @@ blogsRouter.post('', async (request, response, next) => {
     const result = await blog.save()
     await user.save()
 
+    // This should not return user.passwordHash
     response.status(201).json(result)
   } catch (err) {
     next(err)
@@ -39,7 +40,7 @@ blogsRouter.post('', async (request, response, next) => {
 blogsRouter.post('/:id', async (request, response, next) => {
   try {
     const likes = request.body.likes
-    const blog = await Blog.findByIdAndUpdate(request.params.id, { likes }, { new: true })
+    const blog = await Blog.findByIdAndUpdate(request.params.id, { likes }, { new: true }).populate({ path: 'user', select: '-passwordHash' })
 
     response.status(200).json(blog)
   } catch (err) {
@@ -49,7 +50,7 @@ blogsRouter.post('/:id', async (request, response, next) => {
 
 blogsRouter.delete('/:id', async (request, response, next) => {
   try {
-    const blog = await Blog.findById(request.params.id).populate('user', { select: 'id' })
+    const blog = await Blog.findById(request.params.id).populate({ path: 'user', select: '-passwordHash' })
 
     if (!blog) {
       return next({ name: 'NotFound', message: 'Blog does not exist.' })

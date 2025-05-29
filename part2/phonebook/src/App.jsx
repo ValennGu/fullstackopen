@@ -10,15 +10,15 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [persons, setPersons] = useState(null)
-  const [message, setMessage] = useState({type: 'msg', text: null})
+  const [message, setMessage] = useState({ type: 'msg', text: null })
 
   useEffect(() => {
     PersonsService
       .getAll()
       .then(data => setPersons(data))
       .catch(() => {
-        setMessage({type: 'err', text: `Unable to get data from the server.`})
-        setTimeout(() => setMessage({type: 'msg', text: null}), 5000)
+        setMessage({ type: 'err', text: `Unable to get data from the server.` })
+        setTimeout(() => setMessage({ type: 'msg', text: null }), 5000)
       })
   }, [])
 
@@ -42,30 +42,30 @@ const App = () => {
         PersonsService
           .update({ ...personToUpdate, number: newNumber })
           .then(data => {
-            setPersons([ ...persons.filter(p => p.id !== data.id), data ])
+            setPersons([...persons.filter(p => p.id !== data.id), data])
             setMessage({ type: 'msg', text: `${data.name}'s phone number has been updated.` })
-            setTimeout(() => setMessage({type: 'msg', text: null}), 5000)
+            setTimeout(() => setMessage({ type: 'msg', text: null }), 5000)
           })
           .catch((err) => {
-            setMessage({type: 'err', text: err.response.data.message})
-            setTimeout(() => setMessage({type: 'msg', text: null}), 5000)
+            setMessage({ type: 'err', text: err.response.data.message })
+            setTimeout(() => setMessage({ type: 'msg', text: null }), 5000)
           })
       }
-      
+
       return
     }
 
     PersonsService
       .create({ name: newName, number: newNumber })
       .then(data => {
-        setPersons([ ...persons, data ])
-        setMessage({type: 'msg', text: `${data.name} has been added to the phonebook.`})
-        setTimeout(() => setMessage({type: 'msg', text: null}), 5000)
+        setPersons([...persons, data])
+        setMessage({ type: 'msg', text: `${data.name} has been added to the phonebook.` })
+        setTimeout(() => setMessage({ type: 'msg', text: null }), 5000)
       })
       .catch((err) => {
         console.log(err)
-        setMessage({type: 'err', text: err.response.data.message })
-        setTimeout(() => setMessage({type: 'msg', text: null}), 5000)
+        setMessage({ type: 'err', text: err.response.data.message })
+        setTimeout(() => setMessage({ type: 'msg', text: null }), 5000)
       })
   }
 
@@ -75,12 +75,12 @@ const App = () => {
         .deleteById(id)
         .then(data => {
           setPersons(persons.filter(person => person.id !== data.id))
-          setMessage({type: 'msg', text: `${data.name} has been removed from the phonebook.`})
-          setTimeout(() => setMessage({type: 'msg', text: null}), 5000)
+          setMessage({ type: 'msg', text: `${data.name} has been removed from the phonebook.` })
+          setTimeout(() => setMessage({ type: 'msg', text: null }), 5000)
         })
         .catch((err) => {
-          setMessage({type: 'err', text: err.response.data.message})
-          setTimeout(() => setMessage({type: 'msg', text: null}), 5000)
+          setMessage({ type: 'err', text: err.response.data.message })
+          setTimeout(() => setMessage({ type: 'msg', text: null }), 5000)
         })
     }
   }
@@ -102,7 +102,7 @@ const App = () => {
       <Notification message={message.text} type={message.type} />
       <h2>Numbers</h2>
       <input value={filter} onChange={onFilterChange} />
-      <PersonList list={filteredPersons} onDelete={onDeletePerson}/>
+      <PersonList list={filteredPersons} onDelete={onDeletePerson} />
     </div>
   )
 }

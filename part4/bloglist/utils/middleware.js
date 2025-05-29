@@ -57,6 +57,8 @@ const tokenExtractor = (req, res, next) => {
 }
 
 const userExtractor = async (req, res, next) => {
+  // Falta error handling.
+
   const decodedToken = jwt.verify(req.token, SECRET)
   if (!decodedToken) {
     return next({ name: 'JsonWebTokenError' })
@@ -66,8 +68,6 @@ const userExtractor = async (req, res, next) => {
   if (!user) {
     return next({ name: 'Unauthorized', message: 'User not valid.' })
   }
-
-  console.log(user.id)
 
   req.user = user
 
